@@ -46,7 +46,10 @@ class SettingsWindow(tk.Toplevel):
 
     def save_settings(self):
         dictionary = {"settings": {
-
+            "colors": self.color_scheme.get(),
+            "folder": self.path_entry.get(),
+            "timeout": 0.5,
+            "save": self.save_to_files.get()
         }}
         self.settings.read_dict(dictionary)
         self.settings.write_settings()
