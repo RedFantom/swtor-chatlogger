@@ -1,0 +1,3 @@
+[submodule "guiparser"]
+	path = guiparser
+	url = git://github.com/RedFantom/swtor-gui-parser
