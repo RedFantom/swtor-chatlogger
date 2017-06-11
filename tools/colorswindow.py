@@ -32,6 +32,7 @@ class ColorsWindow(tk.Toplevel):
         tk.Toplevel.__init__(self, window)
         self.title("SWTOR Chat Logger: Chat colors")
         self.resizable(False, False)
+        self.grab_set()
         self.column_label_one = ttk.Label(self, text="Type of event", font=("Calibri", 12))
         self.column_label_two = ttk.Label(self, text="Background color", font=("Calibri", 12))
         self.column_label_three = ttk.Label(self, text="Text color", font=("Calibri", 12))
@@ -173,8 +174,8 @@ class ColorsWindow(tk.Toplevel):
 
     def grid_widgets(self):
         self.column_label_one.grid(column=0, columnspan=2, row=0, sticky="w")
-        self.column_label_two.grid(column=2, columnspan=2, row=0, sticky="w")
-        self.column_label_three.grid(column=4, columnspan=2, row=0, sticky="w")
+        self.column_label_two.grid(column=4, columnspan=2, row=0, sticky="w")
+        self.column_label_three.grid(column=2, columnspan=2, row=0, sticky="w")
         set_row = 1
         for key in self.colors.keys():
             self.color_labels[key].grid(column=0, columnspan=2, row=set_row, sticky="w")
