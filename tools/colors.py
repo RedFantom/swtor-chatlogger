@@ -5,35 +5,28 @@
 
 # Originally written for the GSF Parser, modified for this program
 import collections
-import tkinter.messagebox
+import tkinter.messagebox as mb
 import os
 import configparser
 import ast
-import utilities
+
+from tools import utilities
 
 
 class ColorScheme(object):
     def __init__(self):
         self.default_colors = collections.OrderedDict()
-        self.default_colors["whisper"] = ["purple", "white"]
-        self.default_colors["group"] = []
-        self.current_scheme = collections.OrderedDict()
+        self.default_colors["whisper"] = ["#a582ff", "#ffffff"]
+        self.default_colors["group"] = ["#cc87f3", "#ffffff"]
+        self.default_colors["emote"] = ["#ff8022", "#ffffff"]
+        self.default_colors["self"] = ["#ff0000", "#ffffff"]
+        self.current_scheme = self.default_colors
 
     def __setitem__(self, key, value):
         self.current_scheme[key] = value
 
     def __getitem__(self, key):
-        try:
-            return list(self.current_scheme[key])
-        except KeyError:
-            tkinter.messagebox.showerror("Error", "The requested color for %s was not found, "
-                                                  "did you alter the event_colors.ini file?" % key)
-            return ['#ffffff', '#000000']
-        except TypeError:
-            tkinter.messagebox.showerror("Error", "The requested color for %s was could not be "
-                                                  "type changed into a list. Did you alter the "
-                                                  "event_colors.ini file?" % key)
-            return ['#ffffff', '#000000']
+        return list(self.current_scheme[key])
 
     def set_scheme(self, name, custom_file=(os.path.join(utilities.get_temp_directory(), "events_colors.ini"))):
         if name == "default":
@@ -47,8 +40,8 @@ class ColorScheme(object):
                     self.current_scheme[key] = ast.literal_eval(value)
             except configparser.NoSectionError:
                 self.current_scheme = self.default_colors
-                tkinter.messagebox.showinfo("Info", "Failed to load custom colors, default colors have been loaded as "
-                                                    "custom color scheme.")
+                mb.showinfo("Info", "Failed to load custom colors, default colors have been loaded as "
+                                    "custom color scheme.")
         else:
             raise ValueError("Expected default, pastel or custom, got %s" % name)
 

@@ -27,12 +27,12 @@ def get_temp_directory():
         return path
     elif sys.platform == "linux":
         path = "/var/tmp/swtorchatlogger"
-        try:
+        if not os.path.exists(path):
             os.makedirs(path)
-        except OSError:
-            raise ValueError("The GSF Parser was unable to gain access to the required temporary folder. "
-                             "This folder is located in /var/tmp/swtorchatlogger. Do you have the required permissions "
-                             "to access this folder?")
         return path
     else:
         raise ValueError("Unsupported platform: %s" % sys.platform)
+
+
+def get_assets_directory():
+    return os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "assets"))
