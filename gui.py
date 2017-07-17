@@ -9,6 +9,9 @@ from tkinter import filedialog as fd
 from ttkthemes.themed_tk import ThemedTk
 # Own modules
 from tools import Settings, ColorScheme, SettingsWindow, OCRLoop
+from simpleocr import open_image
+from tools.utilities import get_assets_directory
+import os
 
 
 class MainWindow(ThemedTk):
@@ -77,13 +80,17 @@ class MainWindow(ThemedTk):
 
     def start_stop_logging(self):
         if not self.logging:
-            self.start_logging()
+            image_path = os.path.join(get_assets_directory(), "template.png")
+            image = open_image(image_path)
+            self.start_logging(ground=image.is_grounded)
         else:
             self.stop_logging()
         self.logging = not self.logging
 
-    def start_logging(self):
-        self.logger = OCRLoop(callback=self.insert_into_listbox, exitq=self.exit_queue)
+    def start_logging(self, ground=False):
+        self.logger = OCRLoop("Redfantom", callback=self.insert_into_listbox, exitq=self.exit_queue)
+        if not ground:
+            self.logger.train()
         self.logger.start()
 
     def stop_logging(self):
@@ -107,12 +114,30 @@ class MainWindow(ThemedTk):
         SettingsWindow(self, self.settings)
 
     def insert_into_listbox(self, type, string, line=None):
+
         if not line:
             line = self.line
-        self.text_widget.insert(line, string)
-        self.text_widget.itemconfig(line, foreground=self.colors[type][0], background=self.colors[type][1])
+        for item in self.wrap_line(string):
+            self.text_widget.insert(line, item)
+            self.text_widget.itemconfig(line, foreground=self.colors[type][0], background=self.colors[type][1])
+            self.line += 1
+            line += 1
         self.line_types[line] = type
-        self.line += 1
+        self.text_widget.see(tk.END)
+
+    @staticmethod
+    def wrap_line(string):
+        words = string.split(" ")
+        temp = ""
+        results = []
+        for word in words:
+            if not len(temp + " " + word) > 60:
+                temp += " " + word
+            else:
+                results.append(temp)
+                temp = ""
+        for result in results:
+            yield result
 
     def set_highlight_color(self, *args):
         print(self.text_widget.curselection())
